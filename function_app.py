@@ -1,25 +1,26 @@
-import azure.functions as func
+import json
 import logging
+import os
+from datetime import datetime
 
+from azure.data.tables import TableServiceClient
+import azure.functions as func
+
+# Create a function app instance
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
-@app.route(route="visitor_counter")
-def visitor_counter(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
+@app.function_name(name="get_visitor_counter")
+@app.route(route="getVisitorCount")
+def getVisitorCount(req: func.HTTPRequest) -> func.HttpResponse:
 
-    name = req.params.get('name')
-    if not name:
-        try:
-            req_body = req.get_json()
-        except ValueError:
-            pass
-        else:
-            name = req_body.get('name')
+    logging.info("Processed a request.")
 
-    if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
-    else:
-        return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
+    try:
+        # Code for fetching and updating databse
+        pass
+    except Exception as e:
+        logging.error(f"An error occured: {e}")
+        return func.HTTPResponse(
+            "An error occured while updating the counter.",
+            status_code=500
         )
