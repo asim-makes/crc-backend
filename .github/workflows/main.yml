@@ -16,9 +16,8 @@ jobs:
   build-and-test: # Can be renamed to anything
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        name: Checkout Repository
-
+      - name: Checkout Repository # The 'name' and 'uses' lines must be at the same indentation level.
+        uses: actions/checkout@v3
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -40,8 +39,8 @@ jobs:
     needs: build-and-test
     environment: Prod
     steps:
-      - uses: actions/checkout@v3
-        name: Checkout Repository
+      - name: Checkout Repository # Same fix as above: 'name' is a sibling to 'uses'.
+        uses: actions/checkout@v3
 
       - name: Login to Azure
         uses: azure/login@v1
@@ -62,6 +61,6 @@ jobs:
           package: './backend'
           scm-do-build-during-deployment: true
 
-       - name: Logout from Azure
-         run: |
-           az logout
+      - name: Logout from Azure # This entire step was indented too far.
+        run: |
+          az logout
