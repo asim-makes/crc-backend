@@ -1,0 +1,31 @@
+name: CI/CD Pipeline for Azure Function
+
+on:
+  push:
+    branches:
+      - main # Trigger the pushes to the 'main' branch.
+
+jobs:
+  build-and-test: # Can be renamed to anything
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout Repository
+
+
+      - name: Setup Python
+        uses: action/setup-python@v4
+        with:
+          python-version: '3.11'
+
+
+      - name: Install Dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+          pip install pytest # Install the test runner
+
+
+      - name: Run Tests
+        run: |
+          pytest backend/
