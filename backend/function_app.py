@@ -69,7 +69,7 @@ def handle_visitor_request(req: func.HttpRequest) -> func.HttpResponse:
             status_code=500
         )
 
-@app.function_name(name="get_visitor_counter")
+@app.function_name(name="get-visitor-counter")
 @app.route(route="getVisitorCount")
 def getVisitorCount(req: func.HttpRequest) -> func.HttpResponse:
 
