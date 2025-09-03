@@ -11,10 +11,10 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 def handle_visitor_request(req: func.HttpRequest) -> func.HttpResponse:
     try:
-        conn_str = os.environ["AzureWebJobsCosmosDBTablesConnectionString"]
+        conn_str = os.environ["CosmosDbConnection"]
 
         service = TableServiceClient.from_connection_string(conn_str)
-        table_client = service.get_table_client(table_name="visitor_count")
+        table_client = service.get_table_client(table_name="visitor-counter")
 
         partition_key = "AnalyticsType"
         row_key = "MetricID"
@@ -24,9 +24,9 @@ def handle_visitor_request(req: func.HttpRequest) -> func.HttpResponse:
                 partition_key=partition_key,
                 row_key=row_key
             )
-            visitors_since_created = visitor_entity.get("total_visitor", 0)
-            visitors_today = visitor_entity.get("visitor_counter", 0)
-            last_visited = visitor_entity.get("last_updated", 0)
+            visitors_since_created = visitor_entity.get("visitors_since_created", 0)
+            visitors_today = visitor_entity.get("visitors_today", 0)
+            last_visited = visitor_entity.get("last_visited", 0)
 
         except:
             # Initialize if entity doesnot exist.
@@ -50,9 +50,9 @@ def handle_visitor_request(req: func.HttpRequest) -> func.HttpResponse:
         update_entity = {
             "PartitionKey": partition_key,
             "RowKey": row_key,
-            "total_visitor": visitors_since_created,
-            "visitor_counter": new_visitors_today,
-            "last_updated": datetime.utcnow().isoformat()
+            "visitors_since_created": visitors_since_created,
+            "visitors_today": new_visitors_today,
+            "last_visited": datetime.utcnow().isoformat()
         }
 
         table_client.upsert_entity(entity=update_entity, mode="replace")

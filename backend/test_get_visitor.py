@@ -48,9 +48,9 @@ def test_initial_visit(mock_table_service_client, mock_environ, mock_request):
         entity={
             "PartitionKey": "AnalyticsType",
             "RowKey": "MetricID",
-            "total_visitor": 1,
-            "visitor_counter": 1,
-            "last_updated": mock_datetime.isoformat()
+            "visitors_since_created": 1,
+            "visitors_today": 1,
+            "last_visited": mock_datetime.isoformat()
         },
         mode="replace"
     )
@@ -68,9 +68,9 @@ def test_same_day_visit(mock_table_service_client, mock_environ, mock_request):
     existing_entity = {
         "PartitionKey": "AnalyticsType",
         "RowKey": "MetricID",
-        "total_visitor": 5,
-        "visitor_counter": 3,
-        "last_updated": "2025-09-03T09:00:00.000000"
+        "visitors_since_created": 5,
+        "visitors_today": 3,
+        "last_visited": "2025-09-03T09:00:00.000000"
     }
     mock_table_client.get_entity.return_value = existing_entity
     
@@ -88,9 +88,9 @@ def test_same_day_visit(mock_table_service_client, mock_environ, mock_request):
         entity={
             "PartitionKey": "AnalyticsType",
             "RowKey": "MetricID",
-            "total_visitor": 6,
-            "visitor_counter": 4,
-            "last_updated": mock_datetime.isoformat()
+            "visitors_since_created": 6,
+            "visitors_today": 4,
+            "last_visited": mock_datetime.isoformat()
         },
         mode="replace"
     )
@@ -107,9 +107,9 @@ def test_new_day_visit(mock_table_service_client, mock_environ, mock_request):
     existing_entity = {
         "PartitionKey": "AnalyticsType",
         "RowKey": "MetricID",
-        "total_visitor": 10,
-        "visitor_counter": 5,
-        "last_updated": "2025-09-02T23:59:59.000000"
+        "visitors_since_created": 10,
+        "visitors_today": 5,
+        "last_visited": "2025-09-02T23:59:59.000000"
     }
     mock_table_client.get_entity.return_value = existing_entity
     
@@ -127,9 +127,9 @@ def test_new_day_visit(mock_table_service_client, mock_environ, mock_request):
         entity={
             "PartitionKey": "AnalyticsType",
             "RowKey": "MetricID",
-            "total_visitor": 11,
-            "visitor_counter": 1,
-            "last_updated": mock_datetime.isoformat()
+            "visitors_since_created": 11,
+            "visitors_today": 1,
+            "last_visited": mock_datetime.isoformat()
         },
         mode="replace"
     )
@@ -166,9 +166,9 @@ def test_initial_visit(mock_table_service_client, mock_environ):
         entity={
             "PartitionKey": "AnalyticsType",
             "RowKey": "MetricID",
-            "total_visitor": 1,
-            "visitor_counter": 1,
-            "last_updated": mock_datetime.isoformat()
+            "visitors_since_created": 1,
+            "visitors_today": 1,
+            "last_visited": mock_datetime.isoformat()
         },
         mode="replace"
     )

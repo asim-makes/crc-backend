@@ -5,6 +5,13 @@ on:
     branches:
       - main # Trigger the pushes to the 'main' branch.
 
+
+env:
+  AZURE_RESOURCE_GROUP_NAME: 'crc-rg'
+  AZURE_FUNCTION_APP_NAME: 'get_visitor_counter'
+  AZURE_REGION: 'canadacentral'
+
+
 jobs:
   build-and-test: # Can be renamed to anything
     runs-on: ubuntu-latest
@@ -18,14 +25,42 @@ jobs:
         with:
           python-version: '3.11'
 
-
       - name: Install Dependencies
         run: |
           python3 -m pip install --upgrade pip
           pip install -r backend/requirements.txt
-          pip install pytest # Install the test runner
-
 
       - name: Run Tests
         run: |
           pytest backend/
+
+
+  deploy-to-azure:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    environment: Prod
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_SECRET }}
+
+      - name: Deploy Azure Bicep Infrastructure
+        uses: azure/arm-deploy@v1
+        with:
+          resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP_NAME }}
+          template: './deployment/main.bicep'
+          parameters: 'functionAppName=${{ env.AZURE_FUNCTION_APP_NAME }} location=${{ env.AZURE_REGION }}'
+
+      - name: 'Zip and Deploy Function App Code'
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
+          package: './backend'
+          scm-do-build-during-deployment: true
+
+       - name: Logout from Azure
+         run: |
+           az logout
