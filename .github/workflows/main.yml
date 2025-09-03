@@ -22,10 +22,10 @@ jobs:
       - name: Install Dependencies
         run: |
           python3 -m pip install --upgrade pip
-          pip install -r crc-backend/requirements.txt
+          pip install -r backend/requirements.txt
           pip install pytest # Install the test runner
 
 
       - name: Run Tests
         run: |
-          pytest crc-backend/
+          pytest backend/
