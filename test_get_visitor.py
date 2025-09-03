@@ -70,7 +70,7 @@ def test_same_day_visit(mock_table_service_client, mock_environ, mock_request):
         "RowKey": "MetricID",
         "total_visitor": 5,
         "visitor_counter": 3,
-        "last_updated": "2025-09-03T09:00:00.000000Z"
+        "last_updated": "2025-09-03T09:00:00.000000"
     }
     mock_table_client.get_entity.return_value = existing_entity
     
@@ -109,7 +109,7 @@ def test_new_day_visit(mock_table_service_client, mock_environ, mock_request):
         "RowKey": "MetricID",
         "total_visitor": 10,
         "visitor_counter": 5,
-        "last_updated": "2025-09-02T23:59:59.000000Z"
+        "last_updated": "2025-09-02T23:59:59.000000"
     }
     mock_table_client.get_entity.return_value = existing_entity
     
@@ -135,11 +135,9 @@ def test_new_day_visit(mock_table_service_client, mock_environ, mock_request):
     )
 
 
-
 @patch('function_app.os.environ')
 @patch('function_app.TableServiceClient')
 def test_initial_visit(mock_table_service_client, mock_environ):
-    # Mocking the environment variable for the connection string
     mock_environ.get.return_value = "fake_connection_string"
 
     mock_table_client = MagicMock()

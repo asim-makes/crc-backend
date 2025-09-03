@@ -31,7 +31,7 @@ def handle_visitor_request(req: func.HttpRequest) -> func.HttpResponse:
         except:
             # Initialize if entity doesnot exist.
             visitor_entity = None
-            visitors_since_created = None
+            visitors_since_created = 0
             visitors_today = 0
             last_visited = datetime.utcnow()
 
@@ -42,7 +42,7 @@ def handle_visitor_request(req: func.HttpRequest) -> func.HttpResponse:
         today = datetime.utcnow()
         if isinstance(last_visited, str):
             last_visited = datetime.fromisoformat(last_visited.replace("Z", ""))
-        if last_visited.date() == today:
+        if last_visited.date() == today.date():
             new_visitors_today = visitors_today + 1
         else:
             new_visitors_today = 1
