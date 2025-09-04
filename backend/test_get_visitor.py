@@ -160,7 +160,8 @@ def test_initial_visit(mock_table_service_client, mock_environ):
         response = function_app.getVisitorCount(req)
 
     assert response.status_code == 200
-    assert response.get_body() == b'Visitor Counter Updated.'
+    response_body = json.loads(response.get_body())
+    assert response_body['visitorCount'] == 1
     
     mock_table_client.upsert_entity.assert_called_once_with(
         entity={
