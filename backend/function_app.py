@@ -57,6 +57,7 @@ def handle_visitor_request(req: func.HttpRequest) -> func.HttpResponse:
 
         table_client.upsert_entity(entity=update_entity, mode="replace")
 
+        # Return the output in JSON
         return func.HttpResponse(
             json.dumps({
                 "visitorCount": new_visitors_today
