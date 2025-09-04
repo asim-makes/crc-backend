@@ -42,6 +42,11 @@ jobs:
       - name: Checkout Repository # Same fix as above: 'name' is a sibling to 'uses'.
         uses: actions/checkout@v3
 
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
       - name: Login to Azure
         uses: azure/login@v1
         with:
@@ -59,7 +64,7 @@ jobs:
         with:
           app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
           package: './backend'
-          # scm-do-build-during-deployment: true
+          scm-do-build-during-deployment: true
 
       - name: Logout from Azure # This entire step was indented too far.
         run: |
