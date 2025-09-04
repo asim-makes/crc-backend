@@ -59,7 +59,7 @@ jobs:
         with:
           app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
           package: './backend'
-          scm-do-build-during-deployment: true
+          # scm-do-build-during-deployment: true
 
       - name: Logout from Azure # This entire step was indented too far.
         run: |
