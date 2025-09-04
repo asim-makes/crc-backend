@@ -59,12 +59,25 @@ jobs:
           template: './deployment/main.bicep'
           parameters: 'functionAppName=${{ env.AZURE_FUNCTION_APP_NAME }} location=${{ env.AZURE_REGION }}'
 
+      # - name: 'Zip and Deploy Function App Code'
+      #   uses: Azure/functions-action@v1
+      #   with:
+      #     app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
+      #     package: './backend'
+      #     scm-do-build-during-deployment: true
+
       - name: 'Zip and Deploy Function App Code'
+        run: |
+          cd ./backend
+          zip -r ../backend.zip .
+        shell: bash
+
+      - name: 'Deploy Function App'
         uses: Azure/functions-action@v1
         with:
           app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
-          package: './backend'
-          scm-do-build-during-deployment: true
+          package: './backend.zip'
+          scm-do-build-during-deployment: false
 
       - name: Logout from Azure # This entire step was indented too far.
         run: |

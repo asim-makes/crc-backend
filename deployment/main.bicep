@@ -127,10 +127,6 @@ resource functionApp 'Microsoft.Web/sites@2021-02-01' = {
           value: applicationInsight.properties.ConnectionString
         }
         {
-          name: 'AzureWebJobsFeatureFlags'
-          value: 'EnableWorkerIndexing'
-        } 
-        {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
         }
