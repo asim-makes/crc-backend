@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python3 -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
+          pip install -r requirements.txt
 
       - name: Run Tests
         run: |
@@ -63,7 +63,7 @@ jobs:
         uses: Azure/functions-action@v1
         with:
          app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
-         package: './backend'
+         package: '.'
          scm-do-build-during-deployment: true
 
       # - name: 'Zip and Deploy Function App Code'
