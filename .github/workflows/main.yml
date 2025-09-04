@@ -8,7 +8,7 @@ on:
 
 env:
   AZURE_RESOURCE_GROUP_NAME: 'crc-rg'
-  AZURE_FUNCTION_APP_NAME: 'crc-func-visitor'
+  AZURE_FUNCTION_APP_NAME: 'get-visitor-counter'
   AZURE_REGION: 'canadacentral'
 
 
@@ -33,12 +33,6 @@ jobs:
         run: |
           pytest test.py
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-function-app
-          path: .
-
 
   deploy-to-azure:
     runs-on: ubuntu-latest
@@ -53,11 +47,6 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: python-function-app
-          path: .
 
       - name: Login to Azure
         uses: azure/login@v1
@@ -71,11 +60,13 @@ jobs:
           template: './deployment/main.bicep'
           parameters: 'functionAppName=${{ env.AZURE_FUNCTION_APP_NAME }} location=${{ env.AZURE_REGION }}'
 
-      - name: Deploy Azure Function
+      - name: 'Zip and Deploy Function App Code'
         uses: Azure/functions-action@v1
         with:
           app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
           package: '.'
+          scm-do-build-during-deployment: true
+          remote-build: true
 
       - name: Logout from Azure # This entire step was indented too far.
         run: |
