@@ -60,11 +60,11 @@ jobs:
           parameters: 'functionAppName=${{ env.AZURE_FUNCTION_APP_NAME }} location=${{ env.AZURE_REGION }}'
 
       - name: 'Zip and Deploy Function App Code'
-         uses: Azure/functions-action@v1
-         with:
-           app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
-           package: './backend'
-           scm-do-build-during-deployment: true
+        uses: Azure/functions-action@v1
+        with:
+         app-name: ${{ env.AZURE_FUNCTION_APP_NAME }}
+         package: './backend'
+         scm-do-build-during-deployment: true
 
       # - name: 'Zip and Deploy Function App Code'
       #   run: |
