@@ -60,7 +60,9 @@ def handle_visitor_request(req: func.HttpRequest) -> func.HttpResponse:
         # Return the output in JSON
         return func.HttpResponse(
             json.dumps({
-                "visitorCount": new_visitors_today
+                "visitorCount": new_visitors_today,
+                "totalVisitors": visitors_since_created,
+                "lastVisited": last_visited.isoformat()
             }), 
             status_code=200
         )

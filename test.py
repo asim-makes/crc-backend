@@ -44,6 +44,11 @@ def test_initial_visit(mock_table_service_client, mock_environ, mock_request):
         response = function_app.getVisitorCount(mock_request)
 
     assert response.status_code == 200
+    response_body = json.loads(response.get_body())
+    assert response_body["visitorCount"] == 1
+    assert response_body["totalVisitors"] == 1
+    assert response_body["lastVisited"] == mock_datetime.isoformat()
+
     mock_table_client.upsert_entity.assert_called_once_with(
         entity={
             "PartitionKey": "AnalyticsType",
@@ -70,7 +75,7 @@ def test_same_day_visit(mock_table_service_client, mock_environ, mock_request):
         "RowKey": "MetricID",
         "visitors_since_created": 5,
         "visitors_today": 3,
-        "last_visited": "2025-09-03T09:00:00.000000"
+        "last_visited": "2025-09-03T09:00:00"
     }
     mock_table_client.get_entity.return_value = existing_entity
     
@@ -84,6 +89,10 @@ def test_same_day_visit(mock_table_service_client, mock_environ, mock_request):
         response = function_app.getVisitorCount(mock_request)
 
     assert response.status_code == 200
+    response_body = json.loads(response.get_body())
+    assert response_body["visitorCount"] == 4
+    assert response_body["totalVisitors"] == 6
+    assert response_body["lastVisited"] == existing_entity["last_visited"]
     mock_table_client.upsert_entity.assert_called_once_with(
         entity={
             "PartitionKey": "AnalyticsType",
@@ -109,7 +118,7 @@ def test_new_day_visit(mock_table_service_client, mock_environ, mock_request):
         "RowKey": "MetricID",
         "visitors_since_created": 10,
         "visitors_today": 5,
-        "last_visited": "2025-09-02T23:59:59.000000"
+        "last_visited": "2025-09-02T23:59:59"
     }
     mock_table_client.get_entity.return_value = existing_entity
     
@@ -123,51 +132,16 @@ def test_new_day_visit(mock_table_service_client, mock_environ, mock_request):
         response = function_app.getVisitorCount(mock_request)
 
     assert response.status_code == 200
+    response_body = json.loads(response.get_body())
+    assert response_body["visitorCount"] == 1
+    assert response_body["totalVisitors"] == 11
+    assert response_body["lastVisited"] == existing_entity["last_visited"]
+
     mock_table_client.upsert_entity.assert_called_once_with(
         entity={
             "PartitionKey": "AnalyticsType",
             "RowKey": "MetricID",
             "visitors_since_created": 11,
-            "visitors_today": 1,
-            "last_visited": mock_datetime.isoformat()
-        },
-        mode="replace"
-    )
-
-
-@patch('function_app.os.environ')
-@patch('function_app.TableServiceClient')
-def test_initial_visit(mock_table_service_client, mock_environ):
-    mock_environ.get.return_value = "fake_connection_string"
-
-    mock_table_client = MagicMock()
-    mock_table_client.get_entity.side_effect = ResourceNotFoundError("Entity not found.")
-    
-    mock_table_service_client.from_connection_string.return_value.get_table_client.return_value = mock_table_client
-    
-    mock_datetime = datetime(2025, 9, 3, 10, 0, 0)
-    with patch('function_app.datetime') as mock_dt:
-        mock_dt.utcnow.return_value = mock_datetime
-        mock_dt.fromisoformat.side_effect = lambda s: datetime.fromisoformat(s.replace("Z", ""))
-
-        req = func.HttpRequest(
-            method='GET',
-            url='/api/getVisitorCount',
-            body=None,
-            headers={'Content-Type': 'application/json'}
-        )
-        
-        response = function_app.getVisitorCount(req)
-
-    assert response.status_code == 200
-    response_body = json.loads(response.get_body())
-    assert response_body['visitorCount'] == 1
-    
-    mock_table_client.upsert_entity.assert_called_once_with(
-        entity={
-            "PartitionKey": "AnalyticsType",
-            "RowKey": "MetricID",
-            "visitors_since_created": 1,
             "visitors_today": 1,
             "last_visited": mock_datetime.isoformat()
         },
